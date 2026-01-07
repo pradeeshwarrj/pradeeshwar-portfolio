@@ -3,145 +3,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pradeeshwar R J | Researcher</title>
+    <title>Pradeeshwar R J | Research Portfolio</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
-        .font-serif {
-            font-family: 'Playfair Display', serif;
+        
+        :root {
+            /* Nature-Inspired Vibrant Pastels */
+            --pastel-sage: #B5D8B5;
+            --pastel-mint: #A8E6CF;
+            --pastel-seafoam: #88D8B0;
+            --pastel-forest: #7BC47F;
+            --pastel-sky: #87CEEB;
+            --pastel-cloud: #B0E0E6;
+            --pastel-lavender: #C5B9E8;
+            --pastel-lilac: #DDA0DD;
+            --pastel-peach: #FFDAB9;
+            --pastel-coral: #FFB3A7;
+            --pastel-sand: #F5DEB3;
+            --pastel-butter: #FFFACD;
+            --pastel-rose: #FFB6C1;
+            
+            /* Accent colors */
+            --accent-forest: #4A8C67;
+            --accent-teal: #2D8B7A;
+            --accent-sky: #5B9BD5;
+            --accent-lavender: #8B7CB3;
+            --accent-coral: #E57373;
+            
+            /* Neutrals */
+            --cream: #FEFEF9;
+            --soft-white: #FAFFF8;
         }
+        
         html {
             scroll-behavior: smooth;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #1e3a5f 100%);
+        
+        body {
+            background: linear-gradient(135deg, var(--soft-white) 0%, #F5FFF5 50%, #F8FFFC 100%);
         }
-        .publication-card:hover {
-            transform: translateY(-4px);
+        
+        .nav-blur {
+            backdrop-filter: saturate(180%) blur(20px);
+            background: rgba(250, 255, 248, 0.9);
+            border-bottom: 1px solid rgba(136, 216, 176, 0.3);
         }
-        .nav-link {
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(136, 216, 176, 0.25);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .link-hover {
             position: relative;
+            transition: color 0.3s ease;
         }
-        .nav-link::after {
+        
+        .link-hover::after {
             content: '';
             position: absolute;
             bottom: -2px;
             left: 0;
             width: 0;
             height: 2px;
-            background: #2d5a87;
+            background: linear-gradient(90deg, var(--pastel-mint), var(--pastel-sky));
             transition: width 0.3s ease;
         }
-        .nav-link:hover::after {
+        
+        .link-hover:hover::after {
             width: 100%;
         }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--pastel-mint) 0%, var(--pastel-seafoam) 100%);
+            transition: all 0.3s ease;
         }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(136, 216, 176, 0.5);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--pastel-sky) 0%, var(--pastel-lavender) 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(135, 206, 235, 0.5);
+        }
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--pastel-mint), var(--pastel-sky), var(--pastel-lavender), transparent);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #1B4332 0%, #2D5A45 30%, #3A7759 60%, #4A9B6D 100%);
+        }
+        /* Gallery Styles */
+        .gallery-item {
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .gallery-item img {
+            transition: transform 0.5s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(27, 67, 50, 0.95);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+        /* Map Styles */
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 1.5rem;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            border: 2px solid var(--pastel-mint);
+        }
+        .leaflet-popup-tip {
+            background: var(--cream);
+        }
+        .custom-marker {
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .location-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .card-pastel {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250, 255, 248, 0.9) 100%);
+        }
+        /* Badge colors */
+        .badge-mint {
+            background: linear-gradient(135deg, var(--pastel-mint) 0%, var(--pastel-seafoam) 100%);
+            color: #1B4332;
+        }
+        .badge-sky {
+            background: linear-gradient(135deg, var(--pastel-sky) 0%, var(--pastel-cloud) 100%);
+            color: #1B4D6B;
+        }
+        .badge-lavender {
+            background: linear-gradient(135deg, var(--pastel-lavender) 0%, var(--pastel-lilac) 100%);
+            color: #4A3A6B;
+        }
+        .badge-peach {
+            background: linear-gradient(135deg, var(--pastel-peach) 0%, var(--pastel-coral) 100%);
+            color: #6B3A2D;
+        }
+        .badge-sand {
+            background: linear-gradient(135deg, var(--pastel-sand) 0%, var(--pastel-butter) 100%);
+            color: #5A4A2D;
+        }
+        .badge-rose {
+            background: linear-gradient(135deg, var(--pastel-rose) 0%, var(--pastel-coral) 100%);
+            color: #6B2D4A;
+        }
+        /* Icon boxes */
+        .icon-box-mint {
+            background: linear-gradient(135deg, var(--pastel-mint) 0%, var(--pastel-seafoam) 100%);
+        }
+        .icon-box-sky {
+            background: linear-gradient(135deg, var(--pastel-sky) 0%, var(--pastel-cloud) 100%);
+        }
+        .icon-box-lavender {
+            background: linear-gradient(135deg, var(--pastel-lavender) 0%, var(--pastel-lilac) 100%);
+        }
+        .icon-box-peach {
+            background: linear-gradient(135deg, var(--pastel-peach) 0%, var(--pastel-coral) 100%);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5FFF5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--pastel-mint), var(--pastel-sky));
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--pastel-seafoam), var(--pastel-lavender));
+        }
+        /* Glowing effects */
+        .glow-nature {
+            box-shadow: 0 0 20px rgba(136, 216, 176, 0.3), 0 0 40px rgba(135, 206, 235, 0.2);
+        }
+        /* Text gradient */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--pastel-mint), var(--pastel-sky), var(--pastel-lavender));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="text-gray-900 antialiased">
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
-        <div class="max-w-6xl mx-auto px-6 py-4">
+    <nav id="navbar" class="fixed top-0 w-full nav-blur z-50 transition-all duration-300">
+        <div class="max-w-5xl mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
-                <a href="#" class="text-xl font-semibold text-gray-800">Pradeeshwar R J</a>
+                <a href="#home" class="text-lg font-bold" style="color: #2D5A45;">🌿 P.R.J</a>
                 <div class="hidden md:flex space-x-8">
-                    <a href="#about" class="nav-link text-gray-600 hover:text-gray-900 transition">About</a>
-                    <a href="#research" class="nav-link text-gray-600 hover:text-gray-900 transition">Research</a>
-                    <a href="#publications" class="nav-link text-gray-600 hover:text-gray-900 transition">Publications</a>
-                    <a href="#education" class="nav-link text-gray-600 hover:text-gray-900 transition">Education</a>
-                    <a href="#contact" class="nav-link text-gray-600 hover:text-gray-900 transition">Contact</a>
+                    <a href="#about" class="link-hover text-sm text-gray-600 hover:text-gray-900">About</a>
+                    <a href="#research" class="link-hover text-sm text-gray-600 hover:text-gray-900">Research</a>
+                    <a href="#experience" class="link-hover text-sm text-gray-600 hover:text-gray-900">Experience</a>
+                    <a href="#publications" class="link-hover text-sm text-gray-600 hover:text-gray-900">Publications</a>
+                    <a href="#gallery" class="link-hover text-sm text-gray-600 hover:text-gray-900">Gallery</a>
+                    <a href="#travels" class="link-hover text-sm text-gray-600 hover:text-gray-900">Field Sites</a>
+                    <a href="#contact" class="link-hover text-sm text-gray-600 hover:text-gray-900">Contact</a>
                 </div>
                 <button id="mobile-menu-btn" class="md:hidden text-gray-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                    <i class="fas fa-bars text-lg"></i>
                 </button>
             </div>
             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-3">
-                <a href="#about" class="block text-gray-600 hover:text-gray-900">About</a>
-                <a href="#research" class="block text-gray-600 hover:text-gray-900">Research</a>
-                <a href="#publications" class="block text-gray-600 hover:text-gray-900">Publications</a>
-                <a href="#education" class="block text-gray-600 hover:text-gray-900">Education</a>
-                <a href="#contact" class="block text-gray-600 hover:text-gray-900">Contact</a>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-4">
+                <a href="#about" class="block text-sm text-gray-600 hover:text-gray-900">About</a>
+                <a href="#research" class="block text-sm text-gray-600 hover:text-gray-900">Research</a>
+                <a href="#experience" class="block text-sm text-gray-600 hover:text-gray-900">Experience</a>
+                <a href="#publications" class="block text-sm text-gray-600 hover:text-gray-900">Publications</a>
+                <a href="#gallery" class="block text-sm text-gray-600 hover:text-gray-900">Gallery</a>
+                <a href="#travels" class="block text-sm text-gray-600 hover:text-gray-900">Field Sites</a>
+                <a href="#contact" class="block text-sm text-gray-600 hover:text-gray-900">Contact</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="gradient-bg min-h-screen flex items-center pt-16">
-        <div class="max-w-6xl mx-auto px-6 py-20">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="text-white order-2 md:order-1">
-                    <p class="text-blue-200 text-lg mb-2">Hello, I'm</p>
-                    <h1 class="font-serif text-5xl md:text-6xl font-bold mb-4">Pradeeshwar R J</h1>
-                    <p class="text-xl md:text-2xl text-blue-100 mb-6">Researcher </p>
-                    <p class="text-blue-200 leading-relaxed mb-8 max-w-lg">
-                        Trying to understand patterns and processes in the nature.
-                    </p>
-                    <div class="flex flex-wrap gap-4">
-                        <a href="#contact" class="bg-white text-blue-900 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition shadow-lg">
-                            Get in Touch
-                        </a>
-                        <a href="#publications" class="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white/10 transition">
-                            View Publications
-                        </a>
-                    </div>
-                </div>
-                <div class="order-1 md:order-2 flex justify-center">
-                    <div class="relative">
-                        <div class="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
-                            <div class="w-full h-full bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
-                                <span class="text-8xl text-white/80 font-serif">J</span>
-                            </div>
-                        </div>
-                        <div class="absolute -bottom-4 -right-4 bg-white rounded-lg shadow-xl px-4 py-2">
-                            <p class="text-sm font-medium text-gray-800">📚 Publications</p>
-                        </div>
-                    </div>
-                </div>
+    <section id="home" class="min-h-screen flex items-center justify-center hero-gradient text-white relative overflow-hidden">
+        <!-- Decorative Elements - Nature Glows -->
+        <div class="absolute top-20 left-10 w-64 h-64 rounded-full blur-3xl opacity-40" style="background: var(--pastel-mint);"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 rounded-full blur-3xl opacity-30" style="background: var(--pastel-sky);"></div>
+        <div class="absolute top-1/2 left-1/4 w-40 h-40 rounded-full blur-2xl opacity-30" style="background: var(--pastel-lavender);"></div>
+        <div class="absolute top-1/3 right-1/4 w-52 h-52 rounded-full blur-3xl opacity-25" style="background: var(--pastel-peach);"></div>
+        <div class="absolute bottom-1/3 left-1/3 w-36 h-36 rounded-full blur-2xl opacity-35" style="background: var(--pastel-seafoam);"></div>
+        
+        <div class="max-w-5xl mx-auto px-6 py-32 text-center relative z-10">
+            <p class="text-sm tracking-widest uppercase mb-6 fade-in" style="color: var(--pastel-mint);">Wildlife Science | Ornithology</p>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 fade-in">
+                Pradeeshwar R J
+            </h1>
+            <p class="text-xl md:text-2xl font-light mb-3 fade-in" style="color: var(--pastel-sky);">
+                Ornithologist & Wildlife Researcher
+            </p>
+            <p class="text-lg font-light mb-2 fade-in" style="color: rgba(168, 230, 207, 0.9);">
+                Project Associate – I, Sálim Ali Centre for Ornithology and Natural History (SACON)
+            </p>
+            <p class="text-sm font-light mb-8 fade-in" style="color: rgba(200, 245, 225, 0.9);">
+                Affiliated to Central University of Tamil Nadu, India
+            </p>
+            <p class="text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed mb-12 fade-in" style="color: rgba(230, 250, 240, 0.95);">
+                Exploring how fire, disturbance, and landscapes shape bird communities across tropical forests and human-modified habitats.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 mb-10 fade-in">
+                <a href="#publications" class="btn-primary text-gray-800 px-8 py-3 rounded-full text-sm font-semibold shadow-lg">
+                    View Research
+                </a>
+                <a href="#contact" class="btn-secondary text-white px-8 py-3 rounded-full text-sm font-semibold shadow-lg">
+                    Get in Touch
+                </a>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-6 fade-in text-sm md:text-base">
+                <a href="mailto:pradeeshwarrj@gmail.com" class="flex items-center gap-2 hover:text-green-200 transition">
+                    <i class="fas fa-envelope"></i>
+                    <span>pradeeshwarrj@gmail.com</span>
+                </a>
+                <span class="hidden md:inline text-white/40">|</span>
+                <a href="tel:+916381275949" class="flex items-center gap-2 hover:text-green-200 transition">
+                    <i class="fas fa-phone"></i>
+                    <span>+91 63812 75949</span>
+                </a>
+            </div>
+            <div class="flex justify-center space-x-6 mt-8 fade-in">
+                <a href="#" class="transition text-lg hover:scale-110" style="color: var(--pastel-mint);"><i class="fas fa-graduation-cap"></i></a>
+                <a href="#" class="transition text-lg hover:scale-110" style="color: var(--pastel-sky);"><i class="fas fa-dove"></i></a>
+                <a href="http://www.linkedin.com/in/pradeeshwar-r-j" target="_blank" rel="noopener" class="transition text-lg hover:scale-110" style="color: var(--pastel-lavender);"><i class="fab fa-linkedin"></i></a>
             </div>
         </div>
-    </header>
+    </section>
 
     <!-- About Section -->
-    <section id="about" class="py-20 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="fade-in">
-                <h2 class="font-serif text-4xl font-bold text-gray-800 mb-8 text-center">About Me</h2>
-                <div class="max-w-3xl mx-auto">
-                    <p class="text-lg text-gray-600 leading-relaxed mb-6">
-                        I am a passionate researcher with interest in animals ecology with climate change
+    <section id="about" class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="fade-in">
+                    <div class="w-64 h-64 md:w-80 md:h-80 mx-auto rounded-3xl flex items-center justify-center overflow-hidden shadow-xl border-4 border-white glow-nature" style="background: linear-gradient(135deg, var(--pastel-mint) 0%, var(--pastel-sky) 50%, var(--pastel-lavender) 100%);">
+                        <svg class="w-32 h-32" fill="white" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="fade-in">
+                    <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-forest);">About</p>
+                    <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                        Hello, I'm Pradeeshwar 🌿
+                    </h2>
+                    <p class="text-lg leading-relaxed mb-4 text-gray-600">
+                        I am an ornithologist and wildlife researcher interested in how ecological processes and disturbance regimes shape bird communities across space and time. My work brings together community ecology, macroecology, disturbance ecology, and landscape ecology.
                     </p>
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <a href="#" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            GitHub
-                        </a>
-                        <a href="#" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                            LinkedIn
-                        </a>
-                        <a href="#" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/></svg>
-                            Google Scholar
-                        </a>
-                        <a href="#" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition">
-                            📄 Download CV
-                        </a>
+                    <p class="text-lg leading-relaxed mb-4 text-gray-600">
+                        During my M.Sc. in Wildlife Science (Ornithology) at Sálim Ali Centre for Ornithology and Natural History (SACON), I worked on the role of pyrodiversity and burn severity in structuring avifaunal communities in southern tropical dry deciduous forests of Bandipur Tiger Reserve, Karnataka.
+                    </p>
+                    <p class="text-lg leading-relaxed mb-6 text-gray-600">
+                        I enjoy combining intensive fieldwork (point counts, biodiversity surveys) with quantitative tools, GIS & remote sensing, and statistical modelling to answer applied conservation questions.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-4">
+                            <span class="w-3 h-3 rounded-full mt-2" style="background: var(--pastel-mint);"></span>
+                            <div>
+                                <p class="text-gray-800 font-semibold">M.Sc. Wildlife Science (Ornithology)</p>
+                                <p class="text-sm text-gray-600">Sálim Ali Centre for Ornithology and Natural History (SACON), Affiliated to Central University of Tamil Nadu, India (2022 – 2024)</p>
+                                <p class="text-xs text-gray-500 mt-1">CGPA: 8.66 / 10</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <span class="w-3 h-3 rounded-full mt-2" style="background: var(--pastel-sky);"></span>
+                            <div>
+                                <p class="text-gray-800 font-semibold">B.Sc. Physics</p>
+                                <p class="text-sm text-gray-600">Jaya College of Arts and Science, Affiliated to University of Madras, Chennai, India (2018 – 2021)</p>
+                                <p class="text-xs text-gray-500 mt-1">CGPA: 7.6 / 10</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <span class="badge-mint px-4 py-2 rounded-full text-sm font-medium">Ornithology</span>
+                        <span class="badge-sky px-4 py-2 rounded-full text-sm font-medium">Community Ecology</span>
+                        <span class="badge-lavender px-4 py-2 rounded-full text-sm font-medium">Macroecology</span>
+                        <span class="badge-peach px-4 py-2 rounded-full text-sm font-medium">Disturbance Ecology</span>
+                        <span class="badge-sand px-4 py-2 rounded-full text-sm font-medium">Population Ecology</span>
+                        <span class="badge-rose px-4 py-2 rounded-full text-sm font-medium">Climate Change & Landscape Ecology</span>
                     </div>
                 </div>
             </div>
@@ -149,180 +386,329 @@
     </section>
 
     <!-- Research Interests -->
-    <section id="research" class="py-20 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="fade-in">
-                <h2 class="font-serif text-4xl font-bold text-gray-800 mb-4 text-center">Research Interests</h2>
-                <p class="text-gray-600 text-center mb-12 max-w-2xl mx-auto">My research spans multiple interconnected areas, with a focus on understanding the ecosystem.</p>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition">
-                        <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                            <span class="text-2xl">🧠</span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Community Ecology</h3>
-                        <p class="text-gray-600">How and why a ecological community is influenced by disturbance.</p>
+    <section id="research" class="py-32" style="background: linear-gradient(135deg, #F5FFF8 0%, #F0FFFC 50%, #F8F5FF 100%);">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-teal);">Research Interests</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                    Ecology across scales
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    From local communities to continental scales, I study how disturbance, climate, and landscape structure influence birds and other wildlife.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card-pastel p-8 rounded-3xl card-hover fade-in shadow-lg border-2" style="border-color: var(--pastel-mint);">
+                    <div class="w-14 h-14 icon-box-mint rounded-2xl flex items-center justify-center mb-6 shadow-md">
+                        <i class="fas fa-dove text-white text-xl"></i>
                     </div>
-                    <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition">
-                        <div class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                            <span class="text-2xl">🔬</span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Bioacoustics</h3>
-                        <p class="text-gray-600"> sdfsfdsfs f</p>
+                    <h3 class="text-lg font-bold mb-3 text-gray-900">Ornithology</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        Ecology and behaviour of birds, with a focus on tropical forest and human-modified landscapes.
+                    </p>
+                </div>
+                <div class="card-pastel p-8 rounded-3xl card-hover fade-in shadow-lg border-2" style="border-color: var(--pastel-sky);">
+                    <div class="w-14 h-14 icon-box-sky rounded-2xl flex items-center justify-center mb-6 shadow-md">
+                        <i class="fas fa-sitemap text-white text-xl"></i>
                     </div>
-                    <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition">
-                        <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                            <span class="text-2xl">📊</span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Macroecology</h3>
-                        <p class="text-gray-600">Designing efficient algorithms for sequential decision-making in complex environments.</p>
+                    <h3 class="text-lg font-bold mb-3 text-gray-900">Community & Population Ecology</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        Community assembly, species interactions, occupancy, and population-level responses to change.
+                    </p>
+                </div>
+                <div class="card-pastel p-8 rounded-3xl card-hover fade-in shadow-lg border-2" style="border-color: var(--pastel-lavender);">
+                    <div class="w-14 h-14 icon-box-lavender rounded-2xl flex items-center justify-center mb-6 shadow-md">
+                        <i class="fas fa-globe-asia text-white text-xl"></i>
                     </div>
-                    <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition">
-                        <div class="w-14 h-14 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
-                            <span class="text-2xl">🤖</span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">AI for Science</h3>
-                        <p class="text-gray-600">Applying machine learning methods to accelerate scientific discovery and research.</p>
+                    <h3 class="text-lg font-bold mb-3 text-gray-900">Macroecology & Climate Change Biology</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        Large-scale biodiversity gradients and how climate change reshapes distributions and communities.
+                    </p>
+                </div>
+                <div class="card-pastel p-8 rounded-3xl card-hover fade-in shadow-lg border-2" style="border-color: var(--pastel-peach);">
+                    <div class="w-14 h-14 icon-box-peach rounded-2xl flex items-center justify-center mb-6 shadow-md">
+                        <i class="fas fa-fire text-white text-xl"></i>
                     </div>
-                    <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition">
-                        <div class="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                            <span class="text-2xl">⚡</span>
+                    <h3 class="text-lg font-bold mb-3 text-gray-900">Disturbance & Landscape Ecology</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        Effects of fire (pyrodiversity), land use, and habitat configuration on wildlife and ecosystems.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-sky);">Experience</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                    Research & Field Experience
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Integrating intensive field surveys with quantitative analyses across forests, rivers, quarry landscapes, and protected areas.
+                </p>
+            </div>
+
+            <div class="space-y-8">
+                <!-- Project Associate I -->
+                <div class="p-8 rounded-3xl bg-white/90 border-2 card-hover fade-in" style="border-color: var(--pastel-mint);">
+                    <div class="flex flex-wrap justify-between gap-4 mb-3">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Project Associate – I</h3>
+                            <p class="text-sm text-gray-600">Comprehensive Conservation Plan for the Endemic and Tree-cavity Nesting Birds of Nicobar Archipelago</p>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Efficient ML</h3>
-                        <p class="text-gray-600">Creating resource-efficient models that can be deployed on edge devices and constrained environments.</p>
-                    </div>
-                    <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition">
-                        <div class="w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                            <span class="text-2xl">🔐</span>
+                        <div class="text-right text-sm text-gray-600">
+                            <p>Apr 2025 – Oct 2025</p>
+                            <p class="text-xs" style="color: var(--accent-forest);">Sálim Ali Centre for Ornithology and Natural History (SACON)</p>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Trustworthy AI</h3>
-                        <p class="text-gray-600">Ensuring fairness, robustness, and transparency in machine learning systems.</p>
                     </div>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li>Conducting point-count based field surveys for endemic and tree-cavity nesting bird species across the Nicobar Archipelago.</li>
+                        <li>Investigating effects of anthropogenic and stochastic factors on cavity-nesting bird populations to inform conservation planning.</li>
+                    </ul>
+                </div>
+
+                <!-- Project Assistant -->
+                <div class="p-8 rounded-3xl bg-white/90 border-2 card-hover fade-in" style="border-color: var(--pastel-sky);">
+                    <div class="flex flex-wrap justify-between gap-4 mb-3">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Project Assistant</h3>
+                            <p class="text-sm text-gray-600">Biodiversity Study for Five Granite Quarries of Tamil Nadu Minerals Ltd. (TAMIN), India</p>
+                        </div>
+                        <div class="text-right text-sm text-gray-600">
+                            <p>Jan 2025</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li>Conducted biodiversity surveys for birds, herpetofauna, and flora in Eastern Ghats quarry landscapes.</li>
+                    </ul>
+                </div>
+
+                <!-- MSc Dissertation -->
+                <div class="p-8 rounded-3xl bg-white/90 border-2 card-hover fade-in" style="border-color: var(--pastel-lavender);">
+                    <div class="flex flex-wrap justify-between gap-4 mb-3">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">M.Sc. Dissertation Project</h3>
+                            <p class="text-sm text-gray-600">Understanding the Role of Pyrodiversity on Avifaunal Communities of Southern Tropical Dry Deciduous Forest in Bandipur Tiger Reserve, Karnataka, India</p>
+                        </div>
+                        <div class="text-right text-sm text-gray-600">
+                            <p>May 2024 – Oct 2024</p>
+                            <p class="text-xs" style="color: var(--accent-lavender);">SACON (South India Centre of Wildlife Institute of India)</p>
+                            <p class="text-xs text-gray-500">Supervisor: Dr. Riddhika Ramesh</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li>Conducted point-count bird surveys across burn-severity gradients in Bandipur Tiger Reserve.</li>
+                        <li>Used remote sensing data to map forest fires and quantify burn severity in southern tropical dry deciduous forests.</li>
+                        <li>Applied community-level approaches to understand how pyrodiversity influences avifaunal composition.</li>
+                    </ul>
+                </div>
+
+                <!-- Volunteering -->
+                <div class="p-8 rounded-3xl bg-white/90 border-2 card-hover fade-in" style="border-color: var(--pastel-peach);">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Selected Field Volunteering</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li>Synchronized Elephant Population Estimation Survey, Bandipur Tiger Reserve, Karnataka (May 2024).</li>
+                        <li>Mahseer Population Estimation Survey, Moyar River, Karnataka (Jan 2024).</li>
+                        <li>Assessment of Prey Population of White-bellied Heron (<em>Ardea insignis</em>), Namdapha Tiger Reserve, Arunachal Pradesh (Nov 2023).</li>
+                        <li>Diversity and occupancy of birds after removal of invasive species, SACON Campus, Coimbatore (Jul 2023).</li>
+                        <li>Synchronized Elephant Population Estimation Survey, Grizzled Squirrel Wildlife Sanctuary, Tamil Nadu (May 2023).</li>
+                        <li>Bird surveys for Coimbatore City Bird Atlas (CCBA), Coimbatore, Tamil Nadu (Mar 2023).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="mt-16 grid md:grid-cols-2 gap-10 fade-in">
+                <div class="p-8 rounded-3xl bg-white/90 border-2" style="border-color: var(--pastel-mint);">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Technical Skills</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Data analysis & software</p>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li><span class="font-semibold">Proficient:</span> Excel, R Programming, QGIS, PRESENCE, DISTANCE, PAST, Raven Pro.</li>
+                        <li><span class="font-semibold">Novice:</span> Google Earth Engine, VORTEX.</li>
+                    </ul>
+                </div>
+                <div class="p-8 rounded-3xl bg-white/90 border-2" style="border-color: var(--pastel-sky);">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Communication</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li>English (IELTS Academic – Overall band score 7.5)</li>
+                        <li>Tamil, Hindi, Malayalam</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Publications -->
-    <section id="publications" class="py-20 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="fade-in">
-                <h2 class="font-serif text-4xl font-bold text-gray-800 mb-4 text-center">Selected Publications</h2>
-                <p class="text-gray-600 text-center mb-12">A selection of my recent research publications</p>
-                
-                <div class="space-y-6">
-                    <!-- Publication 1 -->
-                    <div class="publication-card bg-gray-50 p-6 rounded-xl transition duration-300 border-l-4 border-blue-500">
-                        <div class="flex flex-wrap items-start justify-between gap-4">
-                            <div class="flex-1">
-                                <span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded mb-2">Ecology and Evolution</span>
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2">Understanding the role of pyrodiversity on avifaunal communities in western ghats</h3>
-                                <p class="text-gray-600 text-sm mb-2"><strong>Pradeeshwar R J</strong>, riddhika kalle</p>
-                                <p class="text-gray-500 text-sm">Ecology and Evolution, 2026</p>
+    <section id="publications" class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-lavender);">Publications</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                    Manuscripts & Ongoing Work
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Manuscripts in preparation and data analysis projects based on pyrodiversity, migratory songbirds, and waterhole ecology.
+                </p>
+            </div>
+            <div class="space-y-6">
+                <!-- Manuscript 1 -->
+                <div class="group p-8 rounded-3xl bg-white/90 border-2 transition-all duration-300 fade-in shadow-sm hover:shadow-lg" style="border-color: var(--pastel-mint);">
+                    <div class="flex flex-wrap items-start justify-between gap-6">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="badge-mint text-xs px-3 py-1 rounded-full font-semibold">Submitted</span>
+                                <span class="text-xs text-gray-500">Pyrodiversity & Avifaunal Communities</span>
                             </div>
-                            <div class="flex gap-2">
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[PDF]</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[Code]</a>
-                            </div>
+                            <h3 class="text-xl font-bold mb-3 text-gray-900 group-hover:text-green-600 transition">
+                                Understanding the role of burn severity (pyrodiversity) on avifaunal communities of southern tropical dry deciduous forest in Bandipur Tiger Reserve, Karnataka
+                            </h3>
+                            <p class="text-sm mb-4" style="color: var(--accent-forest);">
+                                <span class="text-gray-900 font-semibold">Pradeeshwar R. J.</span>, T. Ramesh, P. Ramesh, K. Riddhika
+                            </p>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Community-level assessment of how variation in burn severity and fire history structures bird communities in southern tropical dry deciduous forests.
+                            </p>
                         </div>
-                    </div>
-
-                    <!-- Publication 2 -->
-                    <div class="publication-card bg-gray-50 p-6 rounded-xl transition duration-300 border-l-4 border-green-500">
-                        <div class="flex flex-wrap items-start justify-between gap-4">
-                            <div class="flex-1">
-                                <span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded mb-2">ICML 2023</span>
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2">Self-Supervised Representation Learning for Multi-Modal Scientific Data</h3>
-                                <p class="text-gray-600 text-sm mb-2">Alice Pradeeshwar R Json*, <strong>Pradeeshwar R J</strong>*, Bob Williams (*equal contribution)</p>
-                                <p class="text-gray-500 text-sm">International Conference on Machine Learning, 2023</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[PDF]</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[Code]</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 3 -->
-                    <div class="publication-card bg-gray-50 p-6 rounded-xl transition duration-300 border-l-4 border-purple-500">
-                        <div class="flex flex-wrap items-start justify-between gap-4">
-                            <div class="flex-1">
-                                <span class="inline-block bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded mb-2">Nature MI 2023</span>
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2">Interpretable Neural Networks for Drug Discovery: A Comprehensive Framework</h3>
-                                <p class="text-gray-600 text-sm mb-2"><strong>Pradeeshwar R J</strong>, Carol Davis, Edward Brown, Fiona Green</p>
-                                <p class="text-gray-500 text-sm">Nature Machine Intelligence, 2023</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[PDF]</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[Code]</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 4 -->
-                    <div class="publication-card bg-gray-50 p-6 rounded-xl transition duration-300 border-l-4 border-orange-500">
-                        <div class="flex flex-wrap items-start justify-between gap-4">
-                            <div class="flex-1">
-                                <span class="inline-block bg-orange-100 text-orange-800 text-xs font-medium px-2.5 py-0.5 rounded mb-2">ACL 2022</span>
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2">Knowledge Graph Construction from Scientific Literature Using Large Language Models</h3>
-                                <p class="text-gray-600 text-sm mb-2">Bob Williams, <strong>Pradeeshwar R J</strong>, Alice Pradeeshwar R Json</p>
-                                <p class="text-gray-500 text-sm">Association for Computational Linguistics, 2022</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[PDF]</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">[Code]</a>
-                            </div>
+                        <div class="flex flex-col gap-2 text-sm min-w-[110px]">
+                            <span class="inline-flex items-center gap-1 text-emerald-700"><i class="fas fa-file-alt"></i> Manuscript</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-center mt-10">
-                    <a href="#" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium">
-                        View all publications on Google Scholar
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                        </svg>
-                    </a>
+                <!-- Manuscript 2 -->
+                <div class="group p-8 rounded-3xl bg-white/90 border-2 transition-all duration-300 fade-in shadow-sm hover:shadow-lg" style="border-color: var(--pastel-sky);">
+                    <div class="flex flex-wrap items-start justify-between gap-6">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="badge-sky text-xs px-3 py-1 rounded-full font-semibold">Data Analysis</span>
+                                <span class="text-xs text-gray-500">Bioacoustics & Migration</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3 text-gray-900 group-hover:text-green-600 transition">
+                                Blyth's reed warbler vocalization in breeding and wintering grounds
+                            </h3>
+                            <p class="text-sm mb-4" style="color: var(--accent-sky);">
+                                D. Winiarska, <span class="text-gray-900 font-semibold">Pradeeshwar R. J.</span>, K. Deoniziak
+                            </p>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Comparative analysis of vocal behaviour of Blyth's reed warbler across breeding and wintering ranges.
+                            </p>
+                        </div>
+                        <div class="flex flex-col gap-2 text-sm min-w-[110px]">
+                            <span class="inline-flex items-center gap-1 text-sky-700"><i class="fas fa-wave-square"></i> Bioacoustics</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manuscript 3 -->
+                <div class="group p-8 rounded-3xl bg-white/90 border-2 transition-all duration-300 fade-in shadow-sm hover:shadow-lg" style="border-color: var(--pastel-lavender);">
+                    <div class="flex flex-wrap items-start justify-between gap-6">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="badge-lavender text-xs px-3 py-1 rounded-full font-semibold">Data Analysis</span>
+                                <span class="text-xs text-gray-500">Waterhole Ecology</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3 text-gray-900 group-hover:text-green-600 transition">
+                                Influence of spatial characteristics of waterholes on terrestrial mammalian species diversity and waterhole use in the Western Ghats
+                            </h3>
+                            <p class="text-sm mb-4" style="color: var(--accent-lavender);">
+                                Bhavesh, <span class="text-gray-900 font-semibold">Pradeeshwar R. J.</span>, R. Kalle, T. Ramesh
+                            </p>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Evaluating how spatial configuration and habitat context of waterholes affect mammal diversity and usage patterns.
+                            </p>
+                        </div>
+                        <div class="flex flex-col gap-2 text-sm min-w-[110px]">
+                            <span class="inline-flex items-center gap-1 text-purple-700"><i class="fas fa-paw"></i> Community Ecology</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conferences -->
+                <div class="p-8 rounded-3xl bg-white/90 border-2 fade-in" style="border-color: var(--pastel-peach);">
+                    <h3 class="text-lg font-bold text-gray-900 mb-3">Conference Presentation</h3>
+                    <p class="text-sm font-semibold text-gray-800 mb-1">Second Asian Ornithological Conference (AOC)</p>
+                    <p class="text-sm text-gray-600 mb-2">November 2024 · Beijing, China</p>
+                    <p class="text-sm text-gray-700"><span class="font-semibold">Oral Presentation:</span> Effects of pyro-diversity on avifaunal communities in southern tropical dry deciduous forest of Western Ghats.</p>
+                </div>
+
+                <!-- Add More Publications Notice -->
+                <div class="p-6 rounded-2xl border-2 border-dashed text-center fade-in" style="border-color: var(--pastel-lavender); background: rgba(197, 185, 232, 0.1);">
+                    <p class="text-gray-500 text-sm">
+                        <i class="fas fa-plus-circle mr-2" style="color: var(--accent-lavender);"></i>
+                        More manuscripts and datasets will be added as they are completed.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Education -->
-    <section id="education" class="py-20 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="fade-in">
-                <h2 class="font-serif text-4xl font-bold text-gray-800 mb-12 text-center">Education</h2>
-                <div class="max-w-3xl mx-auto">
-                    <div class="relative">
-                        <!-- Timeline line -->
-                        <div class="absolute left-0 md:left-1/2 transform md:-translate-x-px h-full w-0.5 bg-blue-200"></div>
-                        
-
-                        <!-- Masters -->
-                        <div class="relative flex items-center justify-between md:justify-normal md:flex-row-reverse mb-8">
-                            <div class="flex items-center order-1 md:w-5/12"></div>
-                            <div class="z-10 flex items-center order-1 bg-blue-500 shadow-xl w-8 h-8 rounded-full">
-                                <span class="mx-auto font-semibold text-lg text-white">📜</span>
-                            </div>
-                            <div class="order-1 bg-white rounded-xl shadow-sm w-full md:w-5/12 px-6 py-4 ml-4 md:ml-0 md:mr-4">
-                                <p class="text-sm text-blue-600 font-medium">2022 - 2024</p>
-                                <h3 class="font-bold text-gray-800 text-lg">Masters in Wildlife Science (Ornithology)</h3>
-                                <p class="text-gray-600">Salim ali centre for ornithology and natural history affiliated to Central University of Tamil Nadu</p>
-                                <p class="text-sm text-gray-500 mt-2">Thesis: Understanding the role of pyrodiversity on avifaunal communities</p>
-                            </div>
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-32" style="background: linear-gradient(135deg, #F5FFF8 0%, #FFF8F5 50%, #F8F5FF 100%);">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-coral);">Gallery</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                    Field & Lab Moments
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Snapshots from Bandipur, the Eastern Ghats, riverine systems, quarries, and conferences—where data and stories come together.
+                </p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 fade-in">
+                <!-- Gallery Item 1 - Fieldwork -->
+                <div class="gallery-item rounded-2xl overflow-hidden aspect-square shadow-lg border-3 border-white glow-nature" onclick="openLightbox(0)">
+                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--pastel-mint) 0%, var(--pastel-seafoam) 100%);">
+                        <div class="text-center p-4 text-white">
+                            <i class="fas fa-binoculars text-3xl mb-2"></i>
+                            <p class="text-sm font-semibold">Bandipur Surveys</p>
                         </div>
-
-                        <!-- Bachelors -->
-                        <div class="relative flex items-center justify-between md:justify-normal">
-                            <div class="flex items-center order-1 md:w-5/12"></div>
-                            <div class="z-10 flex items-center order-1 bg-blue-400 shadow-xl w-8 h-8 rounded-full">
-                                <span class="mx-auto font-semibold text-lg text-white">📚</span>
-                            </div>
-                            <div class="order-1 bg-white rounded-xl shadow-sm w-full md:w-5/12 px-6 py-4 ml-4 md:ml-4">
-                                <p class="text-sm text-blue-600 font-medium">2018 - 2021</p>
-                                <h3 class="font-bold text-gray-800 text-lg">Bachelors in Physics</h3>
-                                <p class="text-gray-600">Madras University</p>
-                            </div>
+                    </div>
+                </div>
+                <!-- Gallery Item 2 - Bird Survey -->
+                <div class="gallery-item rounded-2xl overflow-hidden aspect-square shadow-lg border-3 border-white glow-nature" onclick="openLightbox(1)">
+                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--pastel-sky) 0%, var(--pastel-cloud) 100%);">
+                        <div class="text-center text-white p-4">
+                            <i class="fas fa-dove text-3xl mb-2"></i>
+                            <p class="text-sm font-semibold">City Bird Atlas</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gallery Item 3 - Acoustic Recording -->
+                <div class="gallery-item rounded-2xl overflow-hidden aspect-square shadow-lg border-3 border-white glow-nature" onclick="openLightbox(2)">
+                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--pastel-lavender) 0%, var(--pastel-lilac) 100%);">
+                        <div class="text-center p-4 text-white">
+                            <i class="fas fa-microphone text-3xl mb-2"></i>
+                            <p class="text-sm font-semibold">Vocal Analyses</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gallery Item 4 - Conference -->
+                <div class="gallery-item rounded-2xl overflow-hidden aspect-square shadow-lg border-3 border-white glow-nature" onclick="openLightbox(3)">
+                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--pastel-peach) 0%, var(--pastel-coral) 100%);">
+                        <div class="text-center p-4 text-white">
+                            <i class="fas fa-podium text-3xl mb-2"></i>
+                            <p class="text-sm font-semibold">AOC Beijing</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gallery Item 5 - Lab Work -->
+                <div class="gallery-item rounded-2xl overflow-hidden aspect-square shadow-lg border-3 border-white glow-nature" onclick="openLightbox(4)">
+                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--pastel-sand) 0%, var(--pastel-butter) 100%);">
+                        <div class="text-center text-gray-700 p-4">
+                            <i class="fas fa-laptop-code text-3xl mb-2"></i>
+                            <p class="text-sm font-semibold">Data & Models</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gallery Item 6 - Graduation -->
+                <div class="gallery-item rounded-2xl overflow-hidden aspect-square shadow-lg border-3 border-white glow-nature" onclick="openLightbox(5)">
+                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--pastel-rose) 0%, var(--pastel-coral) 100%);">
+                        <div class="text-center text-white p-4">
+                            <i class="fas fa-graduation-cap text-3xl mb-2"></i>
+                            <p class="text-sm font-semibold">M.Sc. at SACON</p>
                         </div>
                     </div>
                 </div>
@@ -330,76 +716,257 @@
         </div>
     </section>
 
-    <!-- News / Updates Section -->
-    <section class="py-20 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <button class="absolute top-6 right-6 text-white text-2xl hover:text-green-200 transition">
+            <i class="fas fa-times"></i>
+        </button>
+        <button id="lightbox-prev" class="absolute left-6 text-white text-2xl hover:text-green-200 transition" onclick="event.stopPropagation(); changeLightbox(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div id="lightbox-content" class="text-center text-white p-8">
+            <div class="w-80 h-80 md:w-96 md:h-96 rounded-3xl flex items-center justify-center mx-auto" id="lightbox-image"></div>
+            <p id="lightbox-caption" class="mt-6 text-xl font-medium"></p>
+            <p id="lightbox-desc" class="mt-2 text-green-200"></p>
+        </div>
+        <button id="lightbox-next" class="absolute right-6 text-white text-2xl hover:text-green-200 transition" onclick="event.stopPropagation(); changeLightbox(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- Field Sites / Map Section -->
+    <section id="travels" class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-sky);">Field Sites</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                    Landscapes I've Worked In
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Bandipur Tiger Reserve, Eastern Ghats quarries, riverine systems, Himalayan forests, and international conferences.
+                </p>
+            </div>
+            
+            <!-- Map Legend -->
+            <div class="flex flex-wrap justify-center gap-4 mb-8 fade-in">
+                <div class="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full shadow-sm border-2" style="border-color: var(--pastel-mint);">
+                    <span class="w-3 h-3 rounded-full" style="background: var(--pastel-mint);"></span>
+                    <span class="text-sm text-gray-700 font-medium">Field Site</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full shadow-sm border-2" style="border-color: var(--pastel-sky);">
+                    <span class="w-3 h-3 rounded-full" style="background: var(--pastel-sky);"></span>
+                    <span class="text-sm text-gray-700 font-medium">Conference</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full shadow-sm border-2" style="border-color: var(--pastel-lavender);">
+                    <span class="w-3 h-3 rounded-full" style="background: var(--pastel-lavender);"></span>
+                    <span class="text-sm text-gray-700 font-medium">Education</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full shadow-sm border-2" style="border-color: var(--pastel-peach);">
+                    <span class="w-3 h-3 rounded-full" style="background: var(--pastel-peach);"></span>
+                    <span class="text-sm text-gray-700 font-medium">Project / Survey</span>
+                </div>
+            </div>
             <div class="fade-in">
-                <h2 class="font-serif text-4xl font-bold text-gray-800 mb-12 text-center">Recent News</h2>
-                <div class="max-w-3xl mx-auto space-y-4">
-                    <div class="flex gap-4 items-start p-4 bg-gray-50 rounded-lg">
-                        <span class="text-sm font-medium text-blue-600 whitespace-nowrap">Jan 2024</span>
-                        <p class="text-gray-700">🎉 Our paper on Efficient Transformers has been accepted to NeurIPS 2024!</p>
-                    </div>
-                    <div class="flex gap-4 items-start p-4 bg-gray-50 rounded-lg">
-                        <span class="text-sm font-medium text-blue-600 whitespace-nowrap">Dec 2023</span>
-                        <p class="text-gray-700">🏆 Received the Outstanding Research Award from the Department of Computer Science.</p>
-                    </div>
-                    <div class="flex gap-4 items-start p-4 bg-gray-50 rounded-lg">
-                        <span class="text-sm font-medium text-blue-600 whitespace-nowrap">Oct 2023</span>
-                        <p class="text-gray-700">🎤 Gave an invited talk at the AI for Science Workshop at Stanford University.</p>
-                    </div>
-                    <div class="flex gap-4 items-start p-4 bg-gray-50 rounded-lg">
-                        <span class="text-sm font-medium text-blue-600 whitespace-nowrap">Aug 2023</span>
-                        <p class="text-gray-700">🌴 Attended ICML 2023 in Honolulu and presented our work on self-supervised learning.</p>
-                    </div>
+                <div id="map" class="shadow-xl border-4 border-white glow-nature"></div>
+            </div>
+            <!-- Location List -->
+            <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-lavender);">
+                    <span class="location-tag badge-lavender">Education</span>
+                    <h4 class="font-bold text-gray-900">SACON, Coimbatore</h4>
+                    <p class="text-sm text-gray-600">M.Sc. Wildlife Science (Ornithology), 2022 – 2024</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-lavender);">Affiliated to Central University of Tamil Nadu</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-mint);">
+                    <span class="location-tag badge-mint">Field Site</span>
+                    <h4 class="font-bold text-gray-900">Bandipur Tiger Reserve</h4>
+                    <p class="text-sm text-gray-600">Karnataka, India</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-forest);">Pyrodiversity & avifaunal communities</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-peach);">
+                    <span class="location-tag badge-peach">Project</span>
+                    <h4 class="font-bold text-gray-900">TAMIN Granite Quarries</h4>
+                    <p class="text-sm text-gray-600">Eastern Ghats, Tamil Nadu, India</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-coral);">Biodiversity assessments in quarry landscapes</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-mint);">
+                    <span class="location-tag badge-mint">Field Site</span>
+                    <h4 class="font-bold text-gray-900">Moyar River</h4>
+                    <p class="text-sm text-gray-600">Karnataka–Tamil Nadu border</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-forest);">Mahseer population estimation survey</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-mint);">
+                    <span class="location-tag badge-mint">Field Site</span>
+                    <h4 class="font-bold text-gray-900">Namdapha Tiger Reserve</h4>
+                    <p class="text-sm text-gray-600">Arunachal Pradesh, India</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-forest);">Prey assessment for White-bellied Heron</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-sky);">
+                    <span class="location-tag badge-sky">Conference</span>
+                    <h4 class="font-bold text-gray-900">AOC, Beijing</h4>
+                    <p class="text-sm text-gray-600">Beijing, China</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-sky);">Second Asian Ornithological Conference, 2024</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-mint);">
+                    <span class="location-tag badge-mint">Field Site</span>
+                    <h4 class="font-bold text-gray-900">Grizzled Squirrel Wildlife Sanctuary</h4>
+                    <p class="text-sm text-gray-600">Tamil Nadu, India</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-forest);">Synchronized elephant population estimation</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-mint);">
+                    <span class="location-tag badge-mint">Field Site</span>
+                    <h4 class="font-bold text-gray-900">Coimbatore City Bird Atlas</h4>
+                    <p class="text-sm text-gray-600">Coimbatore, Tamil Nadu, India</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-forest);">Urban bird community monitoring</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition" style="border-color: var(--pastel-peach);">
+                    <span class="location-tag badge-peach">Project</span>
+                    <h4 class="font-bold text-gray-900">Nicobar Archipelago</h4>
+                    <p class="text-sm text-gray-600">Andaman & Nicobar Islands, India</p>
+                    <p class="text-xs mt-1" style="color: var(--accent-coral);">Endemic & cavity-nesting bird conservation plan</p>
+                </div>
+                <div class="p-6 bg-white/90 rounded-2xl shadow-sm border-2 hover:shadow-md transition border-dashed" style="border-color: var(--pastel-lavender); background: rgba(197, 185, 232, 0.1);">
+                    <p class="text-gray-500 text-sm text-center py-4">
+                        <i class="fas fa-plus-circle mr-2" style="color: var(--accent-lavender);"></i>
+                        More field sites and collaborations will be added as projects grow.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section class="py-32" style="background: linear-gradient(135deg, #F5FFF8 0%, #F0FFFC 50%, #FFF8F5 100%);">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-forest);">Achievements</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                    Grants & Scholarships
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Support received for research, fieldwork, and international conference participation.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 fade-in">
+                <div class="card-pastel p-6 rounded-3xl border-2" style="border-color: var(--pastel-mint);">
+                    <p class="text-xs uppercase font-semibold mb-2" style="color: var(--accent-forest);">Jan 2025</p>
+                    <h3 class="font-bold text-gray-900 mb-2">Avian Satellite Transmitter Grant</h3>
+                    <p class="text-sm text-gray-700">Grant from Hunan Global Messenger Technology Co., Ltd for three satellite transmitters to track Black-bellied Tern (<em>Sterna acuticauda</em>) in India (fieldwork forthcoming).</p>
+                </div>
+                <div class="card-pastel p-6 rounded-3xl border-2" style="border-color: var(--pastel-sky);">
+                    <p class="text-xs uppercase font-semibold mb-2" style="color: var(--accent-sky);">Nov 2024</p>
+                    <h3 class="font-bold text-gray-900 mb-2">AOC Travel Grant (Level 1)</h3>
+                    <p class="text-sm text-gray-700">Travel, accommodation, and registration support to present at the Second Asian Ornithological Conference (AOC), Beijing.</p>
+                </div>
+                <div class="card-pastel p-6 rounded-3xl border-2" style="border-color: var(--pastel-lavender);">
+                    <p class="text-xs uppercase font-semibold mb-2" style="color: var(--accent-lavender);">2022 – 2024</p>
+                    <h3 class="font-bold text-gray-900 mb-2">MoEFCC Scholarship</h3>
+                    <p class="text-sm text-gray-700">Ministry of Environment, Forest and Climate Change (MoEFCC) scholarship covering tuition, field trips, stipend, and dissertation expenses during M.Sc.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 gradient-bg">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="fade-in text-center text-white">
-                <h2 class="font-serif text-4xl font-bold mb-4">Get in Touch</h2>
-                <p class="text-blue-100 mb-8 max-w-2xl mx-auto">I'm always happy to discuss research collaborations, speaking opportunities, or just chat about interesting ideas in AI and machine learning.</p>
-                
-                <div class="flex flex-wrap justify-center gap-6 mb-10">
-                    <a href="mailto:Pradeeshwar R J@university.edu" class="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-6 py-4 rounded-xl transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>Pradeeshwar R J@university.edu</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-6 py-4 rounded-xl transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <span>Room 123, CS Building</span>
-                    </a>
+    <section id="contact" class="py-32" style="background: linear-gradient(135deg, #F5FFF8 0%, #F0FFFC 50%, #FFF8F5 100%);">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <p class="text-sm uppercase tracking-widest mb-4 font-semibold" style="color: var(--accent-forest);">Contact</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900">
+                    Let's Connect
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Open to PhD opportunities, research collaborations, and field-based projects in ecology and ornithology.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-16">
+                <div class="fade-in">
+                    <div class="space-y-8">
+                        <div>
+                            <p class="text-sm uppercase tracking-wider mb-2 font-semibold" style="color: var(--accent-teal);">Email</p>
+                            <a href="mailto:pradeeshwarrj@gmail.com" class="text-xl font-semibold text-gray-900 hover:text-green-600 transition">pradeeshwarrj@gmail.com</a>
+                        </div>
+                        <div>
+                            <p class="text-sm uppercase tracking-wider mb-2 font-semibold" style="color: var(--accent-teal);">Phone</p>
+                            <a href="tel:+916381275949" class="text-gray-700 hover:text-green-600 transition">+91 63812 75949</a>
+                        </div>
+                        <div>
+                            <p class="text-sm uppercase tracking-wider mb-2 font-semibold" style="color: var(--accent-teal);">Institution</p>
+                            <p class="text-gray-600">Sálim Ali Centre for Ornithology and Natural History (SACON)</p>
+                            <p class="text-gray-600">Coimbatore, Tamil Nadu, India</p>
+                        </div>
+                        <div>
+                            <p class="text-sm uppercase tracking-wider mb-2 font-semibold" style="color: var(--accent-teal);">Status</p>
+                            <p class="text-gray-600">Project Associate – I, working on conservation planning for endemic and cavity-nesting birds of Nicobar Archipelago.</p>
+                            <p class="text-sm mt-1" style="color: var(--accent-forest);">Open to discussions on PhD positions, collaborations, and joint field projects.</p>
+                        </div>
+                        <div>
+                            <p class="text-sm uppercase tracking-wider mb-2 font-semibold" style="color: var(--accent-teal);">LinkedIn</p>
+                            <a href="http://www.linkedin.com/in/pradeeshwar-r-j" target="_blank" rel="noopener" class="flex items-center gap-2 text-gray-700 hover:text-green-600 transition">
+                                <i class="fab fa-linkedin"></i>
+                                <span>/in/pradeeshwar-r-j</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 p-6 rounded-2xl border-2 glow-nature" style="background: linear-gradient(135deg, #F5FFFA 0%, #F0FFFC 100%); border-color: var(--pastel-mint);">
+                        <p class="text-sm font-semibold text-gray-900 mb-2">Modules I enjoyed most 📚</p>
+                        <p class="text-sm text-gray-600">
+                            Ornithology, Community & Macroecology, Landscape & Habitat Ecology, Evolutionary and Behavioural Ecology, GIS & Remote Sensing, Biostatistics, Conservation Biology, and Human–wildlife Conflict.
+                        </p>
+                    </div>
                 </div>
-
-                <div class="flex justify-center gap-4">
-                    <a href="#" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                    </a>
+                
+                <div class="fade-in">
+                    <form id="contact-form" class="space-y-6 bg-white/90 p-8 rounded-3xl shadow-lg border-2" style="border-color: var(--pastel-mint);">
+                        <div>
+                            <input type="text" class="w-full px-0 py-4 border-0 border-b-2 focus:outline-none focus:ring-0 bg-transparent transition" style="border-color: var(--pastel-mint);" placeholder="Your name" required>
+                        </div>
+                        <div>
+                            <input type="email" class="w-full px-0 py-4 border-0 border-b-2 focus:outline-none focus:ring-0 bg-transparent transition" style="border-color: var(--pastel-sky);" placeholder="your@email.com" required>
+                        </div>
+                        <div>
+                            <select class="w-full px-0 py-4 border-0 border-b-2 focus:outline-none focus:ring-0 bg-transparent transition text-gray-600" style="border-color: var(--pastel-lavender);">
+                                <option value="">Select a topic</option>
+                                <option>Research Collaboration</option>
+                                <option>PhD Discussion</option>
+                                <option>Field Work Inquiry</option>
+                                <option>Data / Analysis Consultation</option>
+                                <option>Just Saying Hi</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <textarea rows="4" class="w-full px-0 py-4 border-0 border-b-2 focus:outline-none focus:ring-0 bg-transparent resize-none transition" style="border-color: var(--pastel-peach);" placeholder="Your message..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary text-gray-800 px-8 py-4 rounded-full text-sm font-semibold w-full shadow-lg">
+                            Send Message 🌿
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-8">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <p>&copy; 2024 Pradeeshwar R J. All rights reserved.</p>
-            <p class="text-sm mt-2">Built with ❤️ for research and discovery</p>
+    <footer class="py-16 border-t-2" style="background: linear-gradient(135deg, #FAFFF8 0%, #F5FFFA 50%, #F0FFFC 100%); border-color: var(--pastel-mint);">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <p class="font-bold text-gray-900 mb-1">🌿 Pradeeshwar R J</p>
+                    <p class="text-sm text-gray-600">Ornithologist & Wildlife Researcher</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="http://www.linkedin.com/in/pradeeshwar-r-j" target="_blank" rel="noopener" class="transition text-lg hover:scale-110" style="color: var(--accent-sky);"><i class="fab fa-linkedin"></i></a>
+                    <a href="mailto:pradeeshwarrj@gmail.com" class="transition text-lg hover:scale-110" style="color: var(--accent-forest);"><i class="fas fa-envelope"></i></a>
+                    <a href="#home" class="transition text-lg hover:scale-110" style="color: var(--accent-lavender);"><i class="fas fa-arrow-up"></i></a>
+                </div>
+            </div>
+            <div class="section-divider my-8"></div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+                <p>© 2024–2025 Pradeeshwar R J. Made with 💚, field boots, and R scripts.</p>
+                <p class="text-xs" style="color: var(--accent-forest);">Open to PhD opportunities & collaborative research in ecology and ornithology.</p>
+            </div>
         </div>
     </footer>
 
@@ -411,7 +978,6 @@
         mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
-
         // Close mobile menu when clicking a link
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
@@ -419,12 +985,21 @@
             });
         });
 
-        // Scroll animations
+        // Contact form submission
+        const contactForm = document.getElementById('contact-form');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Thank you for your message! I'll get back to you soon. 🌿");
+            contactForm.reset();
+        });
+
+        // Fade in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -432,20 +1007,112 @@
                 }
             });
         }, observerOptions);
+        fadeElements.forEach(el => observer.observe(el));
 
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
+        // Trigger hero animations immediately
+        document.querySelectorAll('#home .fade-in').forEach((el, index) => {
+            setTimeout(() => {
+                el.classList.add('visible');
+            }, index * 150);
         });
 
-        // Navbar background on scroll
-        const nav = document.querySelector('nav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                nav.classList.add('shadow-md');
-            } else {
-                nav.classList.remove('shadow-md');
+        // Gallery Lightbox - Nature Pastels
+        const galleryData = [
+            { title: 'Bandipur Surveys', desc: 'Point-count surveys across burn-severity gradients in Bandipur Tiger Reserve.', gradient: 'linear-gradient(135deg, #A8E6CF 0%, #88D8B0 100%)', icon: 'fa-binoculars', textColor: 'white' },
+            { title: 'Coimbatore City Bird Atlas', desc: 'Urban bird monitoring for the Coimbatore City Bird Atlas (CCBA).', gradient: 'linear-gradient(135deg, #87CEEB 0%, #B0E0E6 100%)', icon: 'fa-dove', textColor: 'white' },
+            { title: 'Vocal Analyses', desc: "Analysing Blyth's reed warbler vocalizations from breeding and wintering grounds.", gradient: 'linear-gradient(135deg, #C5B9E8 0%, #DDA0DD 100%)', icon: 'fa-microphone', textColor: 'white' },
+            { title: 'AOC Beijing', desc: 'Oral presentation on pyrodiversity and bird communities at AOC 2024, Beijing.', gradient: 'linear-gradient(135deg, #FFDAB9 0%, #FFB3A7 100%)', icon: 'fa-podium', textColor: 'white' },
+            { title: 'Data & Models', desc: 'Building ecological models in R, QGIS and specialised software.', gradient: 'linear-gradient(135deg, #F5DEB3 0%, #FFFACD 100%)', icon: 'fa-laptop-code', textColor: '#5A4A2D' },
+            { title: 'M.Sc. at SACON', desc: 'Two transformative years of coursework, fieldwork and dissertation at SACON.', gradient: 'linear-gradient(135deg, #FFB6C1 0%, #FFB3A7 100%)', icon: 'fa-graduation-cap', textColor: 'white' }
+        ];
+        let currentLightboxIndex = 0;
+        function openLightbox(index) {
+            currentLightboxIndex = index;
+            updateLightboxContent();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function changeLightbox(direction) {
+            currentLightboxIndex = (currentLightboxIndex + direction + galleryData.length) % galleryData.length;
+            updateLightboxContent();
+        }
+        function updateLightboxContent() {
+            const item = galleryData[currentLightboxIndex];
+            const imgEl = document.getElementById('lightbox-image');
+            imgEl.style.background = item.gradient;
+            imgEl.className = 'w-80 h-80 md:w-96 md:h-96 rounded-3xl flex items-center justify-center mx-auto';
+            imgEl.innerHTML = `<i class="fas ${item.icon} text-6xl" style="color: ${item.textColor};"></i>`;
+            document.getElementById('lightbox-caption').textContent = item.title;
+            document.getElementById('lightbox-desc').textContent = item.desc;
+        }
+        // Close lightbox with escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') changeLightbox(-1);
+            if (e.key === 'ArrowRight') changeLightbox(1);
+        });
+
+        // Initialize Map - Centered on India
+        const map = L.map('map').setView([20.5937, 78.9629], 4.7);
+        
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // Custom marker icons with pastel colors
+        function createMarkerIcon(color) {
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="width: 20px; height: 20px; background: ${color}; border-radius: 50%; border: 3px solid white; box-shadow: 0 3px 12px rgba(0,0,0,0.2);"></div>`,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+        }
+
+        // Location data (approximate coordinates)
+        const locations = [
+            { lat: 11.0168, lng: 76.9558, title: 'SACON, Coimbatore', desc: 'M.Sc. Wildlife Science (Ornithology), 2022–2024.', type: 'education', color: '#C5B9E8' },
+            { lat: 11.654, lng: 76.627, title: 'Bandipur Tiger Reserve', desc: 'Pyrodiversity and avifaunal community research.', type: 'field', color: '#A8E6CF' },
+            { lat: 11.6, lng: 76.7, title: 'Moyar River', desc: 'Mahseer population estimation survey (Jan 2024).', type: 'field', color: '#A8E6CF' },
+            { lat: 27.5, lng: 96.4, title: 'Namdapha Tiger Reserve', desc: 'Prey assessment for White-bellied Heron (Nov 2023).', type: 'field', color: '#A8E6CF' },
+            { lat: 9.55, lng: 77.3, title: 'Grizzled Squirrel Wildlife Sanctuary', desc: 'Synchronized elephant population estimation survey (May 2023).', type: 'field', color: '#A8E6CF' },
+            { lat: 11.05, lng: 76.98, title: 'Coimbatore City Bird Atlas', desc: 'Urban bird surveys for CCBA (Mar 2023).', type: 'field', color: '#A8E6CF' },
+            { lat: 11.1271, lng: 78.6569, title: 'TAMIN Granite Quarries (Eastern Ghats)', desc: 'Biodiversity assessment for granite quarries (Jan 2025).', type: 'project', color: '#FFDAB9' },
+            { lat: 8.0, lng: 93.5, title: 'Nicobar Archipelago', desc: 'Conservation plan for endemic and cavity-nesting birds (Project Associate – I).', type: 'project', color: '#FFDAB9' },
+            { lat: 39.9042, lng: 116.4074, title: 'Beijing, China', desc: 'Second Asian Ornithological Conference (AOC), Nov 2024.', type: 'conference', color: '#87CEEB' }
+        ];
+
+        // Add markers to map
+        locations.forEach(loc => {
+            const marker = L.marker([loc.lat, loc.lng], { icon: createMarkerIcon(loc.color) }).addTo(map);
+            marker.bindPopup(`
+                <div style="min-width: 170px;">
+                    <h4 style="font-weight: 700; margin-bottom: 4px; color: #2D5A45;">${loc.title}</h4>
+                    <p style="color: #4A8C67; font-size: 12px; margin: 0;">${loc.desc}</p>
+                </div>
+            `);
+        });
+
+        // Draw connecting lines between Indian sites
+        if (locations.length > 1) {
+            const indiaCoords = locations
+                .filter(loc => loc.lng >= 60 && loc.lng <= 100 && loc.lat >= 5 && loc.lat <= 30)
+                .map(loc => [loc.lat, loc.lng]);
+            if (indiaCoords.length > 1) {
+                L.polyline(indiaCoords, { 
+                    color: '#A8E6CF', 
+                    weight: 2, 
+                    opacity: 0.6,
+                    dashArray: '5, 10'
+                }).addTo(map);
             }
-        });
+        }
     </script>
 </body>
 </html>
